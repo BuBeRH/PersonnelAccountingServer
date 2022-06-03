@@ -10,6 +10,13 @@ namespace PersonnelAccountingServer.Database
     {
         private static readonly SqliteConnection connection = new("DataSource=PersonalDB.db");
 
+        public static Jpersons GetFiltredPersons()
+        {
+            Jpersons jpersons = new();
+
+            return jpersons;
+        }
+
         public static void DeletePerson(int id)
         {
             connection.Open();
