@@ -5,6 +5,18 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 DBConnect.Connect();
 
+app.MapGet("/getfiltredperson", async (context) =>
+{
+    var response = context.Response;
+
+    response.Headers.ContentType = "application/json; charset=utf-8";
+    if (context.Request.Query["param"] != "")
+    {
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsJsonAsync(DBConnect.GetFiltredPersons(context.Request.Query["param"], context.Request.Query["col"]));
+    }
+});
+
 app.MapGet("/deleteperson", async (context) =>
 {
     var response = context.Response;
@@ -16,7 +28,7 @@ app.MapGet("/deleteperson", async (context) =>
     }
 });
 
-app.MapGet("/updateperson", async (context) =>
+app.MapPost("/updateperson", async (context) =>
 {
     var request = context.Request;
 
@@ -55,10 +67,9 @@ app.MapGet("/getperson", async (context) =>
     }
 });
 
-app.MapGet("/addperson", async (context) =>
+app.MapPost("/addperson", async (context) =>
 {
     var request = context.Request;
-
     try
     {
         Jperson? person = await request.ReadFromJsonAsync<Jperson>();

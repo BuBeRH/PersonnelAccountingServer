@@ -10,11 +10,41 @@ namespace PersonnelAccountingServer.Database
     {
         private static readonly SqliteConnection connection = new("DataSource=PersonalDB.db");
 
-        public static Jpersons GetFiltredPersons()
+        public static Jpersons GetFiltredPersons(string param, string col)
         {
-            Jpersons jpersons = new();
+            connection.Open();
+            List<Person> person = new();
+            int count = 0;
+            string sqlExpression = "SELECT * FROM Personal";
 
-            return jpersons;
+            SqliteCommand command = new(sqlExpression, connection);
+            using (SqliteDataReader reader = command.ExecuteReader())
+            {
+                if (reader.HasRows) // если есть данные
+                {
+                    while (reader.Read())   // построчно считываем данные
+                    {
+                        if (reader[col].ToString().Contains(param))
+                        {
+                            person.Add(new Person());
+                            person[count].Id = Convert.ToInt64(reader["Id"]);
+                            person[count].Function = reader["Function"].ToString();
+                            person[count].LastName = reader["LastName"].ToString();
+                            person[count].FirstName = reader["FirstName"].ToString();
+                            person[count].ThirdName = reader["ThirdName"].ToString();
+                            person[count].DateOfBirth = reader["DateOfBirth"].ToString();
+                            person[count].Gender = reader["Gender"].ToString();
+                            person[count].UniqueDirector = reader["UniqueDirector"].ToString();
+                            person[count].UniqueLeader = reader["UniqueLeader"].ToString();
+                            person[count].UniqueControler = reader["UniqueControler"].ToString();
+                            person[count].UniqueWorker = reader["UniqueWorker"].ToString();
+                            count++;
+                        }
+                    }
+                }
+            }
+            connection.Close();
+            return new Jpersons { Persons = person };
         }
 
         public static void DeletePerson(int id)
@@ -39,7 +69,6 @@ namespace PersonnelAccountingServer.Database
                 " LastName = '" + person.LastName + "'," +
                 " FirstName = '" + person.FirstName + "'," +
                 " ThirdName = '" + person.ThirdName + "'," +
-                " Departament = '" + person.Departament + "'," +
                 " DateOfBirth = '" + person.DateOfBirth + "'," +
                 " Gender = '" + person.Gender + "'," +
                 " UniqueDirector = '" + person.UniqueDirector + "'," +
@@ -74,7 +103,6 @@ namespace PersonnelAccountingServer.Database
                         person[count].LastName = reader["LastName"].ToString();
                         person[count].FirstName = reader["FirstName"].ToString();
                         person[count].ThirdName = reader["ThirdName"].ToString();
-                        person[count].Departament = reader["Departament"].ToString();
                         person[count].DateOfBirth = reader["DateOfBirth"].ToString();
                         person[count].Gender = reader["Gender"].ToString();
                         person[count].UniqueDirector = reader["UniqueDirector"].ToString();
@@ -107,7 +135,6 @@ namespace PersonnelAccountingServer.Database
                         person.LastName = reader["LastName"].ToString();
                         person.FirstName = reader["FirstName"].ToString();
                         person.ThirdName = reader["ThirdName"].ToString();
-                        person.Departament = reader["Departament"].ToString();
                         person.DateOfBirth = reader["DateOfBirth"].ToString();
                         person.Gender = reader["Gender"].ToString();
                         person.UniqueDirector = reader["UniqueDirector"].ToString();
@@ -130,13 +157,12 @@ namespace PersonnelAccountingServer.Database
             {
                 Connection = connection,
                 CommandText = "INSERT INTO Personal " +
-                "(Function, LastName, FirstName, ThirdName, Departament, DateOfBirth, Gender, UniqueDirector, UniqueLeader, UniqueControler, UniqueWorker) " +
+                "(Function, LastName, FirstName, ThirdName, DateOfBirth, Gender, UniqueDirector, UniqueLeader, UniqueControler, UniqueWorker) " +
                 "VALUES (" +
                 "'" + person.Function + "'," +
                 "'" + person.LastName + "'," +
                 "'" + person.FirstName + "'," +
                 "'" + person.ThirdName + "'," +
-                "'" + person.Departament + "'," +
                 "'" + person.DateOfBirth + "'," +
                 "'" + person.Gender + "'," +
                 "'" + person.UniqueDirector + "'," +
@@ -163,7 +189,6 @@ namespace PersonnelAccountingServer.Database
                 "LastName TEXT NOT NULL," +
                 "FirstName TEXT NOT NULL," +
                 "ThirdName TEXT NOT NULL," +
-                "Departament TEXT NOT NULL," +
                 "DateOfBirth TEXT NOT NULL," +
                 "Gender TEXT NOT NULL," +
                 "UniqueDirector TEXT," +

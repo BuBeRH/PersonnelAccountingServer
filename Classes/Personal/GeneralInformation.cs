@@ -19,9 +19,6 @@ namespace PersonnelAccountingServer.Classes.Personal
         [JsonPropertyName("ThirdName")]
         public string ThirdName { get; set; } = "Иванович";
 
-        [JsonPropertyName("Departament")]
-        public string Departament { get; set; } = "Логистика";
-
         [JsonPropertyName("DateOfBirth")]
         public string DateOfBirth { get; set; } = "01.01.1900";
 
